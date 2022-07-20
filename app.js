@@ -1,11 +1,14 @@
 const express = require('express')
 const cors = require('cors')
 const joi = require('joi')
+const config = require('./config')
+const expressJWT = require('express-jwt')
 
 const app = express()
 
 app.use(cors())  // cors中间件
 app.use(express.urlencoded({extended:false}))  // 解析application/x-www-form-urlencoded格式表单数据中间件
+
 app.use((req,res,next)=> {
     res.cc = function(err,status = 1){
         res.send({
@@ -16,12 +19,17 @@ app.use((req,res,next)=> {
     next()
 })
 
+app.use(expressJWT({ secret: config.jwtSecretKey }).unless({ path: [/^\/api\//] }))
+
+
+
 const userRouter = require('./router/user')
 
 app.use('/api',userRouter)
 
 app.use((err,req,res,next)=> {
     if(err instanceof joi.ValidationError) return res.cc(err)
+    if (err.name === 'UnauthorizedError') return res.cc('身份认证失败！')
     res.cc(err)
 })
 
