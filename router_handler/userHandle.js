@@ -1,6 +1,8 @@
 
 const db = require('../db/index')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const config = require('../config')
 
 exports.regUser = (req,res)=> {
     const userInfo = req.body
@@ -39,5 +41,28 @@ exports.regUser = (req,res)=> {
 }
 
 exports.login = (req,res)=> {
-    res.send('login OK')
+    const userInfo = req.body
+
+    const sqlStr = 'select * from ev_users where username=?'
+
+    db.query(sqlStr,userInfo.username,(err,results)=>{
+        if(err) return res.cc(err)
+        if(results.length !== 1) return res.cc('用户不存在')
+
+        const compareResult = bcrypt.compareSync(userInfo.password,results[0].password)
+        if(!compareResult){
+            return res.cc('密码错误')
+        }
+
+        const user = {...results[0],password:'',user_pic: ''}
+        const tokenStr = jwt.sign(user,config.jwtSecretKey,{
+            expiresIn: '10h'
+        })
+        res.send({
+            status:0,
+            msg: '登陆成功',
+            token: 'Bearer' + tokenStr
+        })
+
+    })
 }
