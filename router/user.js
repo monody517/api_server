@@ -4,8 +4,11 @@ const router = express.Router()
 
 const userHandler = require('../router_handler/userHandle')
 
-router.post('/reguser',userHandler.regUser)
+const expressJoi = require('@escook/express-joi')
+const {reg_login_schema} = require('../schema/user')
 
-router.post('/login',userHandler.login)
+router.post('/reguser', expressJoi(reg_login_schema), userHandler.regUser)
+
+router.post('/login', expressJoi(reg_login_schema), userHandler.login)
 
 module.exports = router
