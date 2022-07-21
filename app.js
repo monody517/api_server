@@ -24,10 +24,12 @@ app.use(expressJWT({ secret: config.jwtSecretKey }).unless({ path: [/^\/api\//] 
 // 导入路由模块
 const userRouter = require('./router/user')
 const userinfoRouter = require('./router/userinfo')
+const artCateRouter = require('./router/artcate')
 
 
 app.use('/api',userRouter)
 app.use('/my',userinfoRouter)
+app.use('/my/article',artCateRouter)
 
 app.use((err,req,res,next)=> {
     if(err instanceof joi.ValidationError) return res.cc(err)
