@@ -17,6 +17,7 @@ exports.reg_login_schema = {
     }
 }
 
+// 验证规则对象 - 更新用户基本信息
 exports.update_userinfo_schema = {
     body: {
         id,
@@ -24,3 +25,14 @@ exports.update_userinfo_schema = {
         email
     }
 }
+
+// 验证规则对象 - 重置密码
+ exports.update_password_schema = {
+     body: {
+         oldPwd: password,
+         // 1. joi.ref('oldPwd') 表示 newPwd 的规则必须和 oldPwd 的规则保持一致
+        // 2. joi.not(joi.ref('oldPwd')) 表示 newPwd 的值不能等于 oldPwd 的值
+        // 3. .concat() 用于合并 joi.not(joi.ref('oldPwd')) 和 password 这两条验证规则 
+         newPwd: joi.not(joi.ref('oldPwd')).concat(password)
+     }
+ }
