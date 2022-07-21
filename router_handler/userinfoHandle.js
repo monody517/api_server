@@ -51,7 +51,16 @@ exports.updatePwd = (req,res)=> {
 
             res.cc(0,'更新密码成功')
         })
-
-
     })
+}
+
+exports.updateAvatar = (req,res) =>{
+    const sqlStr = 'update ev_users set user_pic=? where id=?'
+    db.query(sqlStr,[req.body.avatar,req.user.id],(err,results)=>{
+        if (err) return res.cc(err)
+        if(results.affectedRows!==1) return results.cc('更新头像失败！')
+
+        return res.cc(0,'更新头像成功！')
+    })
+
 }
