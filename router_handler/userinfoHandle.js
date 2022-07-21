@@ -14,3 +14,18 @@ exports.getUserInfo = (req,res)=> {
         })
     })
 }
+
+exports.updateUserInfo = (req,res)=> {
+    const sqlStr = 'update ev_users set ? where id=?'
+
+    db.query(sqlStr, [req.body, req.body.id], (err, results) => {
+        // 执行 SQL 语句失败
+        if (err) return res.cc(err)
+      
+        // 执行 SQL 语句成功，但影响行数不为 1
+        if (results.affectedRows !== 1) return res.cc('修改用户基本信息失败！')
+      
+        // 修改用户信息成功
+        return res.cc('修改用户基本信息成功！', 0)
+      })
+} 
